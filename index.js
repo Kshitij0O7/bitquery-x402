@@ -1,11 +1,13 @@
-import express from "express";
 import axios from "axios";
-import { paymentMiddleware, x402ResourceServer } from "@x402/express";
-import { ExactEvmScheme } from "@x402/evm/exact/server";
-import { HTTPFacilitatorClient } from "@x402/core/server";
+import express from "express";
+import { paymentMiddleware } from "@x402/express";
+import { x402ResourceServer, HTTPFacilitatorClient } from "@x402/core/server";
+import { registerExactEvmScheme } from "@x402/evm/exact/server";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-app.use(express.json());
 
 // Your wallet (seller receives USDC here)
 const payTo = "0x4C10192b9F6F4781BA5fb27145743630e4B0D3F8";
@@ -15,8 +17,8 @@ const facilitatorClient = new HTTPFacilitatorClient({
   url: "https://x402.org/facilitator"
 });
 
-const server = new x402ResourceServer(facilitatorClient)
-  .register("eip155:84532", new ExactEvmScheme()); // Base Sepolia
+const server = new x402ResourceServer(facilitatorClient);
+registerExactEvmScheme(server);
 
 // x402 paywall
 app.use(
@@ -26,12 +28,12 @@ app.use(
         accepts: [
           {
             scheme: "exact",
-            price: "$0.002",
+            price: "$0.001",
             network: "eip155:84532",
             payTo,
           },
         ],
-        description: "Ethereum transfer data via Bitquery",
+        description: "Latest price of a token via Bitquery",
         mimeType: "application/json",
       },
     },
@@ -65,7 +67,7 @@ app.post("/bitquery/eth-transfers", async (req, res) => {
       },
       {
         headers: {
-          "Authorization": "Bearer ory_at_YE9xJUabGenX_R6ZqwJOu1qvQ8pu4petzY2mYAMFpj0.nv9CMJYlpmiXDlm3iYV5hC7b-ooXWg2lrYNADOO-IYk",
+          "Authorization": `Bearer ${process.env.BITQUERY_API_KEY}`,
         },
       }
     );
