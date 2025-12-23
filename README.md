@@ -259,7 +259,7 @@ For implementation details, see the [x402 documentation](https://x402.org) or ch
 ```
 
 ## 📧 Contact
-
+[**Signup to Bitquery**](https://account.bitquery.io/auth/signup/?utm_source=github&utm_medium=x402_service&utm_campaign=x402_hackathon_project)
 For inquiries about this service or Bitquery APIs:
 - **Email:** sales@bitquery.io
 
