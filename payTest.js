@@ -21,7 +21,7 @@ const response = await fetchWithPayment("http://localhost:4021/latest-price", {
   headers: {
     "Content-Type": "application/json",
   },
-  body: JSON.stringify({}),
+  body: JSON.stringify({ tokenAddress: "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" }),
 });
 
 const data = await response.json();

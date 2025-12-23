@@ -9,6 +9,7 @@ import {queryRunner} from "bitquery-helper";
 dotenv.config();
 
 const app = express();
+app.use(express.json()); // Parse JSON request bodies
 
 // Your wallet (seller receives USDC here)
 const payTo = "0x4C10192b9F6F4781BA5fb27145743630e4B0D3F8";
@@ -43,10 +44,21 @@ app.use(
 );
 
 app.post("/latest-price", async (req, res) => {
+  try {
+    const { tokenAddress } = req.body || {};
+    
+    if (!tokenAddress) {
+      return res.status(400).json({
+        error: "Bad Request",
+        message: "tokenAddress is required in request body"
+      });
+    }
+    
     const query = `
       query MyQuery {
         Trading {
           Tokens(
+            where: {Token: {Address: {is: "${tokenAddress}"}}, Interval: {Time: {Duration: {eq: 1}}}}
             orderBy: {descending: Block_Time}
             limit: {count: 1}
           ) {
@@ -72,8 +84,16 @@ app.post("/latest-price", async (req, res) => {
         },
       }
     );
+    
     res.json(response.data);
-  });
+  } catch (error) {
+    console.error("Error fetching token price:", error);
+    res.status(500).json({
+      error: "Internal Server Error",
+      message: error.response?.data?.message || error.message || "Failed to fetch token price"
+    });
+  }
+});
   
 app.listen(4021, () =>
 console.log("Paid Bitquery API running on :4021")

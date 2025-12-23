@@ -65,7 +65,7 @@ The server configuration is in `index.js`:
 To change the payment amount or recipient address, modify the `paymentMiddleware` configuration in `index.js`:
 
 ```javascript
-"POST /bitquery/eth-transfers": {
+"POST /latest-price": {
   accepts: [
     {
       scheme: "exact",
@@ -96,7 +96,7 @@ Paid Bitquery API running on :4021
 If you try to access the endpoint without payment, you'll receive a `402 Payment Required` response:
 
 ```bash
-curl -X POST http://localhost:4021/bitquery/eth-transfers \
+curl -X POST http://localhost:4021/latest-price \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
@@ -148,7 +148,7 @@ registerExactEvmScheme(client, { signer });
 const fetchWithPayment = wrapFetchWithPayment(fetch, client);
 
 // Make request - payment is handled automatically
-const response = await fetchWithPayment("http://localhost:4021/bitquery/eth-transfers", {
+const response = await fetchWithPayment("http://localhost:4021/latest-price", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
   body: JSON.stringify({}),
@@ -160,7 +160,7 @@ console.log(data);
 
 ## 📡 API Endpoint
 
-### POST `/bitquery/eth-transfers`
+### POST `/latest-price`
 
 Retrieves the latest token price data from Bitquery.
 
@@ -168,7 +168,7 @@ Retrieves the latest token price data from Bitquery.
 
 **Request:**
 ```bash
-POST /bitquery/eth-transfers
+POST /latest-price
 Content-Type: application/json
 
 {}
@@ -222,14 +222,14 @@ The test client will:
 
 **Test without payment (should return 402):**
 ```bash
-curl -v -X POST http://localhost:4021/bitquery/eth-transfers \
+curl -v -X POST http://localhost:4021/latest-price \
   -H "Content-Type: application/json" \
   -d '{}'
 ```
 
 **View payment challenge:**
 ```bash
-curl -X POST http://localhost:4021/bitquery/eth-transfers \
+curl -X POST http://localhost:4021/latest-price \
   -H "Content-Type: application/json" \
   -d '{}' \
   -i | grep PAYMENT-REQUIRED
