@@ -1,10 +1,12 @@
-import axios from "axios";
 import express from "express";
 import { paymentMiddleware } from "@x402/express";
 import { x402ResourceServer, HTTPFacilitatorClient } from "@x402/core/server";
 import { registerExactEvmScheme } from "@x402/evm/exact/server";
 import dotenv from "dotenv";
-import {queryRunner} from "bitquery-helper";
+import { getLatestPrice } from "./endpoints/latest-price.js";
+import { getOHLC } from "./endpoints/ohlc.js";
+import { getAveragePrice } from "./endpoints/average-price.js";
+import { getVolume } from "./endpoints/volume.js";
 
 dotenv.config();
 
@@ -22,20 +24,42 @@ const facilitatorClient = new HTTPFacilitatorClient({
 const server = new x402ResourceServer(facilitatorClient);
 registerExactEvmScheme(server);
 
+const payConfig = {
+    scheme: "exact",
+    price: "$0.001",
+    network: "eip155:84532",
+    payTo,
+};
 // x402 paywall
 app.use(
   paymentMiddleware(
     {
       "POST /latest-price": {
         accepts: [
-          {
-            scheme: "exact",
-            price: "$0.001",
-            network: "eip155:84532",
-            payTo,
-          },
+          payConfig,
         ],
         description: "Latest price of a token via Bitquery",
+        mimeType: "application/json",
+      },
+      "POST /ohlc": {
+        accepts: [
+          payConfig,
+        ],
+        description: "OHLC of a token via Bitquery",
+        mimeType: "application/json",
+      },
+      "POST /average-price": {
+        accepts: [
+          payConfig,
+        ],
+        description: "Average price of a token via Bitquery",
+        mimeType: "application/json",
+      },
+      "POST /volume": {
+        accepts: [
+          payConfig,
+        ],
+        description: "Trade volume for a token via Bitquery",
         mimeType: "application/json",
       },
     },
@@ -43,58 +67,11 @@ app.use(
   ),
 );
 
-app.post("/latest-price", async (req, res) => {
-  try {
-    const { tokenAddress } = req.body || {};
-    
-    if (!tokenAddress) {
-      return res.status(400).json({
-        error: "Bad Request",
-        message: "tokenAddress is required in request body"
-      });
-    }
-    
-    const query = `
-      query MyQuery {
-        Trading {
-          Tokens(
-            where: {Token: {Address: {is: "${tokenAddress}"}}, Interval: {Time: {Duration: {eq: 1}}}}
-            orderBy: {descending: Block_Time}
-            limit: {count: 1}
-          ) {
-            Price {
-              Ohlc {
-                Close
-              }
-            }
-          }
-        }
-      }
-    `;
-  
-    const response = await axios.post(
-      "https://streaming.bitquery.io/graphql",
-      {
-        query,
-        variables: { limit: 10 },
-      },
-      {
-        headers: {
-          "Authorization": `Bearer ${process.env.BITQUERY_API_KEY}`,
-        },
-      }
-    );
-    
-    res.json(response.data);
-  } catch (error) {
-    console.error("Error fetching token price:", error);
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: error.response?.data?.message || error.message || "Failed to fetch token price"
-    });
-  }
-});
-  
+app.post("/latest-price", getLatestPrice);
+app.post("/ohlc", getOHLC);
+app.post("/average-price", getAveragePrice);
+app.post("/volume", getVolume);
+
 app.listen(4021, () =>
 console.log("Paid Bitquery API running on :4021")
 );
