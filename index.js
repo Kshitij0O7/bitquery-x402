@@ -4,6 +4,7 @@ import { paymentMiddleware } from "@x402/express";
 import { x402ResourceServer, HTTPFacilitatorClient } from "@x402/core/server";
 import { registerExactEvmScheme } from "@x402/evm/exact/server";
 import dotenv from "dotenv";
+import {queryRunner} from "bitquery-helper";
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ registerExactEvmScheme(server);
 app.use(
   paymentMiddleware(
     {
-      "POST /bitquery/eth-transfers": {
+      "POST /latest-price": {
         accepts: [
           {
             scheme: "exact",
@@ -41,7 +42,7 @@ app.use(
   ),
 );
 
-app.post("/bitquery/eth-transfers", async (req, res) => {
+app.post("/latest-price", async (req, res) => {
     const query = `
       query MyQuery {
         Trading {
@@ -71,7 +72,6 @@ app.post("/bitquery/eth-transfers", async (req, res) => {
         },
       }
     );
-    console.log(response.data);
     res.json(response.data);
   });
   
