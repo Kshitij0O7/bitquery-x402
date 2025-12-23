@@ -71,7 +71,7 @@ app.post("/bitquery/eth-transfers", async (req, res) => {
         },
       }
     );
-  
+    console.log(response.data);
     res.json(response.data);
   });
   
