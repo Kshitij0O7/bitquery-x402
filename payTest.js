@@ -118,6 +118,39 @@ const response2 = await fetchWithPayment("http://localhost:4021/ohlc", {
   }),
 });
 
+// First, check payment status
+console.log("\n💳 Payment Status Check:");
+console.log("=".repeat(60));
+console.log(`Response Status: ${response2.status} ${response2.statusText}`);
+
+const httpClient2 = new x402HTTPClient(client);
+const paymentResponse2 = httpClient2.getPaymentSettleResponse(
+  (name) => response2.headers.get(name)
+);
+
+if (response2.status === 402) {
+  console.log("⚠️  Payment Required (402)");
+  const paymentRequired = response2.headers.get("PAYMENT-REQUIRED");
+  if (paymentRequired) {
+    console.log("Payment Required Header:", paymentRequired.substring(0, 100) + "...");
+  }
+} else if (paymentResponse2) {
+  console.log("Payment Response:", JSON.stringify(paymentResponse2, null, 2));
+  if (paymentResponse2.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse2.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
+    console.log(`✅ Payment successful!`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse2.transaction}`);
+    console.log(`   Network: ${paymentResponse2.network}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse2.requirements.extra.name}`);
+  }
+} else {
+  console.log("No payment information found in headers");
+}
+console.log("=".repeat(60));
+
+// Now get the data
 const data2 = await response2.json();
 
 // Display Bitquery API response in a readable format
@@ -144,28 +177,6 @@ if (Array.isArray(data2) && data2.length > 0) {
   console.log(JSON.stringify(data2, null, 4));
 }
 
-// Get payment receipt from response headers
-if (response2.ok) {
-  console.log("\n💳 Payment Information:");
-  console.log("=".repeat(60));
-  const httpClient2 = new x402HTTPClient(client);
-  const paymentResponse2 = httpClient2.getPaymentSettleResponse(
-    (name) => response2.headers.get(name)
-  );
-  console.log(JSON.stringify(paymentResponse2, null, 2));
-  console.log("=".repeat(60));
-  
-  if (paymentResponse2.success) {
-    const amountInSmallestUnit = BigInt(paymentResponse2.requirements.amount);
-    const decimals = 6; // USDC has 6 decimals
-    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
-    console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: ${explorerUrl}${paymentResponse2.transaction}`);
-    console.log(`   Network: ${paymentResponse2.network}`);
-    console.log(`   Amount: ${actualAmount} ${paymentResponse2.requirements.extra.name}`);
-  }
-}
-
 // ============================================================================
 // TEST 3: Average Price Endpoint
 // ============================================================================
@@ -184,6 +195,39 @@ const response3 = await fetchWithPayment("http://localhost:4021/average-price", 
   }),
 });
 
+// First, check payment status
+console.log("\n💳 Payment Status Check:");
+console.log("=".repeat(60));
+console.log(`Response Status: ${response3.status} ${response3.statusText}`);
+
+const httpClient3 = new x402HTTPClient(client);
+const paymentResponse3 = httpClient3.getPaymentSettleResponse(
+  (name) => response3.headers.get(name)
+);
+
+if (response3.status === 402) {
+  console.log("⚠️  Payment Required (402)");
+  const paymentRequired = response3.headers.get("PAYMENT-REQUIRED");
+  if (paymentRequired) {
+    console.log("Payment Required Header:", paymentRequired.substring(0, 100) + "...");
+  }
+} else if (paymentResponse3) {
+  console.log("Payment Response:", JSON.stringify(paymentResponse3, null, 2));
+  if (paymentResponse3.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse3.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
+    console.log(`✅ Payment successful!`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse3.transaction}`);
+    console.log(`   Network: ${paymentResponse3.network}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse3.requirements.extra.name}`);
+  }
+} else {
+  console.log("No payment information found in headers");
+}
+console.log("=".repeat(60));
+
+// Now get the data
 const data3 = await response3.json();
 
 // Display Bitquery API response in a readable format
@@ -212,28 +256,6 @@ if (Array.isArray(data3) && data3.length > 0) {
 } else {
   console.log("\n📊 Average Price Data:");
   console.log(JSON.stringify(data3, null, 4));
-}
-
-// Get payment receipt from response headers
-if (response3.ok) {
-  console.log("\n💳 Payment Information:");
-  console.log("=".repeat(60));
-  const httpClient3 = new x402HTTPClient(client);
-  const paymentResponse3 = httpClient3.getPaymentSettleResponse(
-    (name) => response3.headers.get(name)
-  );
-  console.log(JSON.stringify(paymentResponse3, null, 2));
-  console.log("=".repeat(60));
-  
-  if (paymentResponse3.success) {
-    const amountInSmallestUnit = BigInt(paymentResponse3.requirements.amount);
-    const decimals = 6; // USDC has 6 decimals
-    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
-    console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: ${explorerUrl}${paymentResponse3.transaction}`);
-    console.log(`   Network: ${paymentResponse3.network}`);
-    console.log(`   Amount: ${actualAmount} ${paymentResponse3.requirements.extra.name}`);
-  }
 }
 
 // ============================================================================
