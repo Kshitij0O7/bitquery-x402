@@ -6,8 +6,15 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
+// Clean and validate the private key
+let privateKey = process.env.EVM_PRIVATE_KEY;
+if (!privateKey) {
+  throw new Error("EVM_PRIVATE_KEY environment variable is not set");
+}
+
+
 // Create a signer from private key (use environment variable)
-const signer = privateKeyToAccount(`0x${process.env.EVM_PRIVATE_KEY}`);
+const signer = privateKeyToAccount(`0x{privateKey}`);
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
