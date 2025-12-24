@@ -51,12 +51,46 @@ export const getLatestPrice = async (req, res) => {
       }
     );
     
-    res.json(response.data.data.Trading.Tokens[0].Price.Ohlc.Close);
+    // Check for GraphQL errors
+    if (response.data.errors) {
+      console.error("Bitquery GraphQL errors:", response.data.errors);
+      return res.status(400).json({
+        error: "Bitquery API Error",
+        message: response.data.errors[0]?.message || "GraphQL query error",
+        details: response.data.errors
+      });
+    }
+    
+    // Check if data exists
+    const tokens = response.data.data?.Trading?.Tokens || [];
+    
+    if (tokens.length === 0) {
+      console.warn(`No data found for token: ${tokenAddress}`);
+      return res.status(404).json({
+        error: "No Data Found",
+        message: `No price data found for token address: ${tokenAddress}`,
+        tokenAddress
+      });
+    }
+    
+    const price = tokens[0]?.Price?.Ohlc?.Close;
+    
+    if (!price) {
+      console.warn(`Price data missing for token: ${tokenAddress}`);
+      return res.status(404).json({
+        error: "No Price Data",
+        message: `Price data not available for token address: ${tokenAddress}`,
+        tokenAddress
+      });
+    }
+    
+    res.json(price);
   } catch (error) {
-    console.error("Error fetching token price:", error);
+    console.error("Error fetching latest price:", error);
     res.status(500).json({
       error: "Internal Server Error",
-      message: error.response?.data?.message || error.message || "Failed to fetch token price"
+      message: error.response?.data?.message || error.message || "Failed to fetch latest price",
+      details: error.response?.data
     });
   }
 };

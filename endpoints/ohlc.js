@@ -60,12 +60,36 @@ export const getOHLC = async (req, res) => {
       }
     );
     
-    res.json(response.data.data.Trading.Tokens);
+    // Check for GraphQL errors
+    if (response.data.errors) {
+      console.error("Bitquery GraphQL errors:", response.data.errors);
+      return res.status(400).json({
+        error: "Bitquery API Error",
+        message: response.data.errors[0]?.message || "GraphQL query error",
+        details: response.data.errors
+      });
+    }
+    
+    // Check if data exists
+    const tokens = response.data.data?.Trading?.Tokens || [];
+    
+    if (tokens.length === 0) {
+      console.warn(`No data found for token: ${tokenAddress} with interval: ${interval}`);
+      return res.status(404).json({
+        error: "No Data Found",
+        message: `No OHLC data found for token address: ${tokenAddress}`,
+        tokenAddress,
+        interval
+      });
+    }
+    
+    res.json(tokens);
   } catch (error) {
-    console.error("Error fetching token price:", error);
+    console.error("Error fetching OHLC data:", error);
     res.status(500).json({
       error: "Internal Server Error",
-      message: error.response?.data?.message || error.message || "Failed to fetch token price"
+      message: error.response?.data?.message || error.message || "Failed to fetch OHLC data",
+      details: error.response?.data
     });
   }
 };
