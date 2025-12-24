@@ -2,6 +2,7 @@ import express from "express";
 import { paymentMiddleware } from "@x402/express";
 import { x402ResourceServer, HTTPFacilitatorClient } from "@x402/core/server";
 import { registerExactEvmScheme } from "@x402/evm/exact/server";
+import { registerExactSvmScheme } from "@x402/svm/exact/server";
 import dotenv from "dotenv";
 import { getLatestPrice } from "./endpoints/latest-price.js";
 import { getOHLC } from "./endpoints/ohlc.js";
@@ -14,21 +15,43 @@ const app = express();
 app.use(express.json()); // Parse JSON request bodies
 
 // Your wallet (seller receives USDC here)
-const payTo = "0x4C10192b9F6F4781BA5fb27145743630e4B0D3F8";
+const payToEVM = "0x4C10192b9F6F4781BA5fb27145743630e4B0D3F8";
+const payToSVM = "Dm2wPukN7AJqEbEgT8w8oLrPdWVhj8j7D9JVXGv9NPAd";
 
 // Testnet facilitator
+// const facilitatorClient = new HTTPFacilitatorClient({
+//   url: "https://x402.org/facilitator"
+// });
+
+// Mainnet facilitator
 const facilitatorClient = new HTTPFacilitatorClient({
-  url: "https://x402.org/facilitator"
-});
+    url: "https://api.cdp.coinbase.com/platform/v2/x402",
+});  
+
 
 const server = new x402ResourceServer(facilitatorClient);
 registerExactEvmScheme(server);
+registerExactSvmScheme(server);
 
-const payConfig = {
+const EVMPayConfig = {
     scheme: "exact",
     price: "$0.001",
-    network: "eip155:84532",
-    payTo,
+    network: "eip155:8453", // Base mainnet (chain ID 8453)
+    payTo: payToEVM,
+};
+
+const SVMPayConfig = {
+    scheme: "exact",
+    price: "$0.001",
+    network: "solana:5eykt4UsFv8P8NJdTREpY1vzqKqZKvdp", // Solana mainnet
+    payTo: payToSVM,
+};
+const discoveryConfig = {
+    bazaar: {
+      discoverable: true,
+      category: "finance",
+      tags: ["price", "ohlc", "average-price", "volume"],
+    },
 };
 // x402 paywall
 app.use(
@@ -36,32 +59,40 @@ app.use(
     {
       "POST /latest-price": {
         accepts: [
-          payConfig,
+          EVMPayConfig,
+        //   SVMPayConfig,
         ],
         description: "Latest price of a token via Bitquery",
         mimeType: "application/json",
+        // extensions: discoveryConfig,
       },
       "POST /ohlc": {
         accepts: [
-          payConfig,
+          EVMPayConfig,
+        //   SVMPayConfig,
         ],
         description: "OHLC of a token via Bitquery",
         mimeType: "application/json",
+    //    extensions: discoveryConfig,
       },
       "POST /average-price": {
         accepts: [
-          payConfig,
+          EVMPayConfig,
+        //   SVMPayConfig,
         ],
         description: "Average price of a token via Bitquery",
         mimeType: "application/json",
+        // extensions: discoveryConfig,
       },
       "POST /volume": {
         accepts: [
-          payConfig,
+          EVMPayConfig,
+        //   SVMPayConfig,
         ],
         description: "Trade volume for a token via Bitquery",
         mimeType: "application/json",
       },
+    //   extensions: discoveryConfig,
     },
     server,
   ),
@@ -72,7 +103,8 @@ app.post("/ohlc", getOHLC);
 app.post("/average-price", getAveragePrice);
 app.post("/volume", getVolume);
 
-app.listen(4021, () =>
-console.log("Paid Bitquery API running on :4021")
+const PORT = process.env.PORT || 4021;
+app.listen(PORT, () =>
+console.log(`Paid Bitquery API running on :${PORT}`)
 );
   
