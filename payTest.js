@@ -12,6 +12,7 @@ const signer = privateKeyToAccount(`0x${process.env.EVM_PRIVATE_KEY}`);
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
 
+const explorerUrl = "https://sepolia.basescan.org/tx/";
 // Wrap fetch with payment handling
 const fetchWithPayment = wrapFetchWithPayment(fetch, client);
 
@@ -68,10 +69,13 @@ if (response1.ok) {
   console.log("=".repeat(60));
   
   if (paymentResponse1.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse1.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
     console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: https://sepolia.basescan.org/tx/${paymentResponse1.transaction}`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse1.transaction}`);
     console.log(`   Network: ${paymentResponse1.network}`);
-    console.log(`   Amount: ${paymentResponse1.requirements.amount} ${paymentResponse1.requirements.extra.name}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse1.requirements.extra.name}`);
   }
 }
 
@@ -131,10 +135,13 @@ if (response2.ok) {
   console.log("=".repeat(60));
   
   if (paymentResponse2.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse2.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
     console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: https://sepolia.basescan.org/tx/${paymentResponse2.transaction}`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse2.transaction}`);
     console.log(`   Network: ${paymentResponse2.network}`);
-    console.log(`   Amount: ${paymentResponse2.requirements.amount} ${paymentResponse2.requirements.extra.name}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse2.requirements.extra.name}`);
   }
 }
 
@@ -198,10 +205,13 @@ if (response3.ok) {
   console.log("=".repeat(60));
   
   if (paymentResponse3.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse3.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
     console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: https://sepolia.basescan.org/tx/${paymentResponse3.transaction}`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse3.transaction}`);
     console.log(`   Network: ${paymentResponse3.network}`);
-    console.log(`   Amount: ${paymentResponse3.requirements.amount} ${paymentResponse3.requirements.extra.name}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse3.requirements.extra.name}`);
   }
 }
 
@@ -263,10 +273,13 @@ if (response4.ok) {
   console.log("=".repeat(60));
   
   if (paymentResponse4.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse4.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
     console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: https://sepolia.basescan.org/tx/${paymentResponse4.transaction}`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse4.transaction}`);
     console.log(`   Network: ${paymentResponse4.network}`);
-    console.log(`   Amount: ${paymentResponse4.requirements.amount} ${paymentResponse4.requirements.extra.name}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse4.requirements.extra.name}`);
   }
 }
 
