@@ -47,7 +47,7 @@ registerExactSvmScheme(server);
 const EVMPayConfig = {
     scheme: "exact",
     price: "$0.001",
-    network: "eip155:84532", // Base Sepolia testnet (chain ID 84532)
+    network: "eip155:8453", // Base Mainnet (chain ID 8453)
     payTo: payToEVM,
 };
 
