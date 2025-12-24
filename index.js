@@ -18,15 +18,26 @@ app.use(express.json()); // Parse JSON request bodies
 const payToEVM = "0x4C10192b9F6F4781BA5fb27145743630e4B0D3F8";
 const payToSVM = "Dm2wPukN7AJqEbEgT8w8oLrPdWVhj8j7D9JVXGv9NPAd";
 
-// Testnet facilitator
-// const facilitatorClient = new HTTPFacilitatorClient({
-//   url: "https://x402.org/facilitator"
-// });
+// Facilitator client configuration
+// For testnet (default)
+let facilitatorClient = new HTTPFacilitatorClient({
+  url: "https://x402.org/facilitator"
+});
 
-// Mainnet facilitator
-const facilitatorClient = new HTTPFacilitatorClient({
+// For mainnet with CDP (Coinbase Developer Platform)
+// Automatically uses CDP facilitator if credentials are provided
+// See: https://docs.cdp.coinbase.com/x402/quickstart-for-sellers#running-on-mainnet
+if (process.env.CDP_API_KEY_ID && process.env.CDP_API_KEY_SECRET) {
+  facilitatorClient = new HTTPFacilitatorClient({
     url: "https://api.cdp.coinbase.com/platform/v2/x402",
-});  
+    // Note: Authentication method may vary - verify with CDP documentation
+    // if you encounter authentication issues
+    headers: {
+      "X-CB-API-KEY": process.env.CDP_API_KEY_ID,
+      "X-CB-API-SECRET": process.env.CDP_API_KEY_SECRET,
+    }
+  });
+}  
 
 
 const server = new x402ResourceServer(facilitatorClient);
@@ -36,7 +47,7 @@ registerExactSvmScheme(server);
 const EVMPayConfig = {
     scheme: "exact",
     price: "$0.001",
-    network: "eip155:8453", // Base mainnet (chain ID 8453)
+    network: "eip155:84532", // Base Sepolia testnet (chain ID 84532)
     payTo: payToEVM,
 };
 

@@ -7,7 +7,17 @@ import dotenv from "dotenv";
 dotenv.config();
 
 // Create a signer from private key (use environment variable)
-const signer = privateKeyToAccount(`0x${process.env.EVM_PRIVATE_KEY}`);
+let privateKey = process.env.EVM_PRIVATE_KEY?.trim();
+if (!privateKey) {
+  throw new Error("EVM_PRIVATE_KEY environment variable is not set");
+}
+// Extract just the value if the variable name is included (e.g., "EVM_PRIVATE_KEY=value")
+if (privateKey.includes('=')) {
+  privateKey = privateKey.split('=').slice(1).join('=').trim();
+}
+// Ensure the private key is properly formatted as hex with 0x prefix
+const privateKeyHex = privateKey.startsWith('0x') ? privateKey : `0x${privateKey}`;
+const signer = privateKeyToAccount(privateKeyHex);
 
 const client = new x402Client();
 registerExactEvmScheme(client, { signer });
@@ -31,6 +41,39 @@ const response1 = await fetchWithPayment("http://localhost:4021/latest-price", {
   body: JSON.stringify({ tokenAddress: "cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" }),
 });
 
+// First, check payment status
+console.log("\n💳 Payment Status Check:");
+console.log("=".repeat(60));
+console.log(`Response Status: ${response1.status} ${response1.statusText}`);
+
+const httpClient1 = new x402HTTPClient(client);
+const paymentResponse1 = httpClient1.getPaymentSettleResponse(
+  (name) => response1.headers.get(name)
+);
+
+if (response1.status === 402) {
+  console.log("⚠️  Payment Required (402)");
+  const paymentRequired = response1.headers.get("PAYMENT-REQUIRED");
+  if (paymentRequired) {
+    console.log("Payment Required Header:", paymentRequired.substring(0, 100) + "...");
+  }
+} else if (paymentResponse1) {
+  console.log("Payment Response:", JSON.stringify(paymentResponse1, null, 2));
+  if (paymentResponse1.success) {
+    const amountInSmallestUnit = BigInt(paymentResponse1.requirements.amount);
+    const decimals = 6; // USDC has 6 decimals
+    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
+    console.log(`✅ Payment successful!`);
+    console.log(`   Transaction: ${explorerUrl}${paymentResponse1.transaction}`);
+    console.log(`   Network: ${paymentResponse1.network}`);
+    console.log(`   Amount: ${actualAmount} ${paymentResponse1.requirements.extra.name}`);
+  }
+} else {
+  console.log("No payment information found in headers");
+}
+console.log("=".repeat(60));
+
+// Now get the data
 const data1 = await response1.json();
 
 // Display Bitquery API response in a readable format
@@ -55,28 +98,6 @@ if (typeof data1 === 'number' || typeof data1 === 'string') {
 } else {
   console.log("\n💰 Token Price Data:");
   console.log(JSON.stringify(data1, null, 4));
-}
-
-// Get payment receipt from response headers
-if (response1.ok) {
-  console.log("\n💳 Payment Information:");
-  console.log("=".repeat(60));
-  const httpClient1 = new x402HTTPClient(client);
-  const paymentResponse1 = httpClient1.getPaymentSettleResponse(
-    (name) => response1.headers.get(name)
-  );
-  console.log(JSON.stringify(paymentResponse1, null, 2));
-  console.log("=".repeat(60));
-  
-  if (paymentResponse1.success) {
-    const amountInSmallestUnit = BigInt(paymentResponse1.requirements.amount);
-    const decimals = 6; // USDC has 6 decimals
-    const actualAmount = Number(amountInSmallestUnit) / Math.pow(10, decimals);
-    console.log(`\n✅ Payment successful!`);
-    console.log(`   Transaction: ${explorerUrl}${paymentResponse1.transaction}`);
-    console.log(`   Network: ${paymentResponse1.network}`);
-    console.log(`   Amount: ${actualAmount} ${paymentResponse1.requirements.extra.name}`);
-  }
 }
 
 // ============================================================================
