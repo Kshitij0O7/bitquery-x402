@@ -13,6 +13,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@coinbase/cdp-sdk": "^1.40.1",
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",
     "@x402/core": "^2.0.0",

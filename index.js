@@ -30,14 +30,10 @@ let facilitatorClient = new HTTPFacilitatorClient({
 if (process.env.CDP_API_KEY_ID && process.env.CDP_API_KEY_SECRET) {
   facilitatorClient = new HTTPFacilitatorClient({
     url: "https://api.cdp.coinbase.com/platform/v2/x402",
-    // Note: Authentication method may vary - verify with CDP documentation
-    // if you encounter authentication issues
-    headers: {
-      "X-CB-API-KEY": process.env.CDP_API_KEY_ID,
-      "X-CB-API-SECRET": process.env.CDP_API_KEY_SECRET,
-    }
   });
 }  
+
+console.log(facilitatorClient);
 
 
 const server = new x402ResourceServer(facilitatorClient);
