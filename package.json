@@ -6,7 +6,16 @@
   "scripts": {
     "test": "node payTest.js",
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "build:client": "node build-client.js"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.3",
+    "esbuild": "^0.19.12",
+    "nodemon": "^3.1.11",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   },
   "keywords": [],
   "author": "",
@@ -22,12 +31,5 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "viem": "^2.43.3"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.6",
-    "@types/node": "^25.0.3",
-    "nodemon": "^3.1.11",
-    "tsx": "^4.21.0",
-    "typescript": "^5.9.3"
   }
 }
