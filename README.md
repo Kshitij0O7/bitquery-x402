@@ -17,7 +17,9 @@ All endpoints require payment of **0.001 USDC** on Base Sepolia (testnet) and ac
 https://your-domain.com
 ```
 
-**Payment Protocol:** All endpoints use the [x402 protocol](https://x402.org) for automatic payment handling. Include payment authorization headers when making requests.
+**Payment Protocol:** All endpoints use the [x402 protocol](https://x402.org) for automatic payment handling. 
+
+**⚠️ Important:** Users must integrate x402 client libraries in their own code to make paid requests. Plain HTTP requests (like curl) will return `402 Payment Required`. See [USER_PAYMENT_GUIDE.md](./USER_PAYMENT_GUIDE.md) for integration instructions.
 
 ---
 

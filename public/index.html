@@ -1,630 +1,883 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bitquery x402 API Tester</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #ffffff;
-            min-height: 100vh;
-            padding: 0;
-            color: #1a1a1a;
-        }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Inter", Oxygen, Ubuntu, Cantarell, sans-serif;
+        background: #ffffff;
+        min-height: 100vh;
+        padding: 0;
+        color: #1a1a1a;
+      }
 
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 40px 24px;
+      }
 
-        .header {
-            text-align: center;
-            margin-bottom: 48px;
-            padding-bottom: 32px;
-            border-bottom: 1px solid #e5e7eb;
-        }
+      .header {
+        text-align: center;
+        margin-bottom: 48px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #e5e7eb;
+      }
 
-        h1 {
-            color: #1a1a1a;
-            margin-bottom: 8px;
-            font-size: 2.75em;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
+      h1 {
+        color: #1a1a1a;
+        margin-bottom: 8px;
+        font-size: 2.75em;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
 
-        .subtitle {
-            color: #6b7280;
-            text-align: center;
-            font-size: 1.125em;
-            font-weight: 400;
-        }
+      .subtitle {
+        color: #6b7280;
+        text-align: center;
+        font-size: 1.125em;
+        font-weight: 400;
+      }
 
-        .warning {
-            background: #fef3c7;
-            border: 1px solid #fbbf24;
-            color: #92400e;
-            padding: 16px 20px;
-            border-radius: 8px;
-            margin-bottom: 32px;
-            text-align: center;
-            font-size: 0.95em;
-        }
+      .warning {
+        background: #fef3c7;
+        border: 1px solid #fbbf24;
+        color: #92400e;
+        padding: 16px 20px;
+        border-radius: 8px;
+        margin-bottom: 32px;
+        text-align: center;
+        font-size: 0.95em;
+      }
 
-        .warning strong {
-            color: #d97706;
-            font-weight: 600;
-        }
+      .warning strong {
+        color: #d97706;
+        font-weight: 600;
+      }
 
-        .api-section {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-            transition: box-shadow 0.2s, border-color 0.2s;
-        }
+      .api-section {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: box-shadow 0.2s, border-color 0.2s;
+      }
 
-        .api-section:hover {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            border-color: #d1d5db;
-        }
+      .api-section:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        border-color: #d1d5db;
+      }
 
-        .api-section h2 {
-            color: #1a1a1a;
-            margin-bottom: 12px;
-            font-size: 1.5em;
-            font-weight: 600;
-            border-bottom: none;
-            padding-bottom: 0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+      .api-section h2 {
+        color: #1a1a1a;
+        margin-bottom: 12px;
+        font-size: 1.5em;
+        font-weight: 600;
+        border-bottom: none;
+        padding-bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
 
-        .api-section p {
-            color: #6b7280;
-            margin-bottom: 24px;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
+      .api-section p {
+        color: #6b7280;
+        margin-bottom: 24px;
+        font-size: 0.95em;
+        line-height: 1.6;
+      }
 
-        .form-group {
-            margin-bottom: 15px;
-        }
+      .form-group {
+        margin-bottom: 15px;
+      }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #374151;
-            font-weight: 500;
-            font-size: 0.875em;
-        }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #374151;
+        font-weight: 500;
+        font-size: 0.875em;
+      }
 
-        input {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.2s;
-            background: #ffffff;
-            color: #1a1a1a;
-        }
+      input {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s;
+        background: #ffffff;
+        color: #1a1a1a;
+      }
 
-        input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-        }
+      input:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
 
-        input::placeholder {
-            color: #9ca3af;
-        }
+      input::placeholder {
+        color: #9ca3af;
+      }
 
-        button {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
+      button {
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+      }
 
-        button:hover {
-            background: #1d4ed8;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
-        }
+      button:hover {
+        background: #1d4ed8;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+      }
 
-        button:active {
-            background: #1e40af;
-            transform: scale(0.98);
-        }
+      button:active {
+        background: #1e40af;
+        transform: scale(0.98);
+      }
 
-        button:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
+      button:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
 
-        .response-container {
-            margin-top: 24px;
-            padding: 20px;
-            background: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 8px;
-            border-left: 3px solid #2563eb;
-            display: none;
-        }
+      .response-container {
+        margin-top: 24px;
+        padding: 20px;
+        background: #f9fafb;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        border-left: 3px solid #2563eb;
+        display: none;
+      }
 
-        .response-container.show {
-            display: block;
-        }
+      .response-container.show {
+        display: block;
+      }
 
-        .response-container.error {
-            border-left-color: #dc2626;
-            background: #fef2f2;
-            border-color: #fecaca;
-        }
+      .response-container.error {
+        border-left-color: #dc2626;
+        background: #fef2f2;
+        border-color: #fecaca;
+      }
 
-        .response-container.success {
-            border-left-color: #16a34a;
-            background: #f0fdf4;
-            border-color: #bbf7d0;
-        }
+      .response-container.success {
+        border-left-color: #16a34a;
+        background: #f0fdf4;
+        border-color: #bbf7d0;
+      }
 
-        .response-container.payment {
-            border-left-color: #f59e0b;
-            background: #fffbeb;
-            border-color: #fde68a;
-        }
+      .response-container.payment {
+        border-left-color: #f59e0b;
+        background: #fffbeb;
+        border-color: #fde68a;
+      }
 
-        .response-header {
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: #1a1a1a;
-            font-size: 0.95em;
-        }
+      .response-header {
+        font-weight: 600;
+        margin-bottom: 12px;
+        color: #1a1a1a;
+        font-size: 0.95em;
+      }
 
-        pre {
-            background: #1f2937;
-            color: #f9fafb;
-            padding: 16px;
-            border-radius: 8px;
-            overflow-x: auto;
-            font-size: 13px;
-            line-height: 1.6;
-            max-height: 500px;
-            overflow-y: auto;
-            border: 1px solid #374151;
-            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-        }
+      pre {
+        background: #1f2937;
+        color: #f9fafb;
+        padding: 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 13px;
+        line-height: 1.6;
+        max-height: 500px;
+        overflow-y: auto;
+        border: 1px solid #374151;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+      }
 
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(37, 99, 235, 0.2);
-            border-radius: 50%;
-            border-top-color: #2563eb;
-            animation: spin 0.8s linear infinite;
-            margin-right: 8px;
-            vertical-align: middle;
-        }
+      .loading {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid rgba(37, 99, 235, 0.2);
+        border-radius: 50%;
+        border-top-color: #2563eb;
+        animation: spin 0.8s linear infinite;
+        margin-right: 8px;
+        vertical-align: middle;
+      }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
         }
+      }
 
-        .status-badge {
-            display: inline-block;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 500;
-            margin-left: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+      .status-badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 11px;
+        font-weight: 500;
+        margin-left: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-        .status-badge.success {
-            background: #d1fae5;
-            color: #065f46;
-        }
+      .status-badge.success {
+        background: #d1fae5;
+        color: #065f46;
+      }
 
-        .status-badge.error {
-            background: #fee2e2;
-            color: #991b1b;
-        }
+      .status-badge.error {
+        background: #fee2e2;
+        color: #991b1b;
+      }
 
-        .status-badge.payment {
-            background: #fef3c7;
-            color: #92400e;
-        }
+      .status-badge.payment {
+        background: #fef3c7;
+        color: #92400e;
+      }
 
-        .wallet-section {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
+      .wallet-section {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 32px;
+        margin-bottom: 24px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      }
 
-        .wallet-section h2 {
-            color: #1a1a1a;
-            margin-bottom: 16px;
-            font-size: 1.25em;
-            font-weight: 600;
-        }
+      .wallet-section h2 {
+        color: #1a1a1a;
+        margin-bottom: 16px;
+        font-size: 1.25em;
+        font-weight: 600;
+      }
 
-        .wallet-section p {
-            color: #6b7280;
-            margin-bottom: 16px;
-            font-size: 0.95em;
-            line-height: 1.6;
-        }
+      .wallet-section p {
+        color: #6b7280;
+        margin-bottom: 16px;
+        font-size: 0.95em;
+        line-height: 1.6;
+      }
 
-        .wallet-status {
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-top: 16px;
-            font-weight: 500;
-            font-size: 0.9em;
-        }
+      .wallet-status {
+        padding: 12px 16px;
+        border-radius: 8px;
+        margin-top: 16px;
+        font-weight: 500;
+        font-size: 0.9em;
+      }
 
-        .wallet-status.connected {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #a7f3d0;
-        }
+      .wallet-status.connected {
+        background: #d1fae5;
+        color: #065f46;
+        border: 1px solid #a7f3d0;
+      }
 
-        .wallet-status.disconnected {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #fecaca;
-        }
+      .wallet-status.disconnected {
+        background: #fee2e2;
+        color: #991b1b;
+        border: 1px solid #fecaca;
+      }
 
-        .info-box {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            border-left: 3px solid #2563eb;
-            padding: 16px;
-            border-radius: 8px;
-            margin-top: 16px;
-            font-size: 0.875em;
-            color: #1e40af;
-            line-height: 1.6;
-        }
+      .info-box {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-left: 3px solid #2563eb;
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 16px;
+        font-size: 0.875em;
+        color: #1e40af;
+        line-height: 1.6;
+      }
 
-        .info-box code {
-            background: #dbeafe;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 0.9em;
-        }
+      .info-box code {
+        background: #dbeafe;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: "Monaco", "Menlo", monospace;
+        font-size: 0.9em;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <div class="header">
-            <h1>Bitquery x402 API Tester</h1>
-            <p class="subtitle">Test all your Bitquery cryptocurrency data APIs</p>
+      <div class="header">
+        <h1>Bitquery x402 API Tester</h1>
+        <p class="subtitle">
+          Get Price data, OHLC data, Average price data, and Volume data from
+          Bitquery cryptocurrency data APIs
+        </p>
+      </div>
+
+      <div class="warning" id="paymentWarning">
+        <strong>💰 Payment Required:</strong>
+        <span id="paymentModeText"
+          >Connect your wallet to make paid API requests (0.001 USDC per
+          request)</span
+        >
+      </div>
+
+      <!-- Wallet/Payment Setup Section -->
+      <div class="wallet-section">
+        <h2>🔐 Connect Your Wallet</h2>
+        <p style="color: #666; margin-bottom: 15px">
+          Connect your wallet to make paid API requests. Each request costs
+          <strong>0.001 USDC</strong> on Base Sepolia testnet. This demo shows
+          how users integrate x402 payments in their applications.
+        </p>
+
+        <div class="form-group">
+          <label for="userPrivateKey">Your Private Key</label>
+          <input
+            type="password"
+            id="userPrivateKey"
+            placeholder="0x..."
+            style="font-family: monospace"
+          />
+          <small style="color: #6b7280; display: block; margin-top: 5px">
+            ⚠️ Your private key stays in your browser - never sent to the
+            server. Make sure you have USDC in this wallet on Base Sepolia.
+          </small>
         </div>
 
-        <div class="warning" id="paymentWarning">
-            <strong>💰 Payment Mode:</strong> 
-            <span id="paymentModeText">Checking payment status...</span>
+        <button
+          type="button"
+          id="connectWalletBtn"
+          onclick="connectWallet()"
+          style="margin-top: 10px"
+        >
+          Connect Wallet
+        </button>
+
+        <button
+          type="button"
+          id="disconnectWalletBtn"
+          onclick="disconnectWallet()"
+          style="
+            margin-top: 10px;
+            margin-left: 10px;
+            background: #dc2626;
+            display: none;
+          "
+        >
+          Disconnect
+        </button>
+
+        <div
+          id="walletStatus"
+          class="wallet-status disconnected"
+          style="margin-top: 16px"
+        >
+          ⚠️ Wallet not connected
         </div>
 
-        <!-- Wallet/Payment Setup Section -->
-        <div class="wallet-section">
-            <h2>🔐 Payment Setup</h2>
-            <p style="color: #666; margin-bottom: 15px;">
-                This UI uses a backend proxy to handle x402 payments. The server uses the <code>EVM_PRIVATE_KEY</code> from your <code>.env</code> file to make payments automatically.
-            </p>
-            <div id="walletStatus" class="wallet-status disconnected">
-                ⚠️ Payment client status: Checking...
-            </div>
-            <div class="info-box">
-                <strong>💡 How it works:</strong><br>
-                • The backend proxy handles x402 payments using your EVM_PRIVATE_KEY<br>
-                • Each API call costs 0.001 USDC on Base Sepolia testnet<br>
-                • Make sure you have USDC in your wallet on Base Sepolia<br>
-                • Set <code>BYPASS_PAYMENT=true</code> in .env to test without payments
-            </div>
+        <div
+          class="info-box"
+          id="walletInfo"
+          style="display: none; margin-top: 16px"
+        >
+          <strong>✅ Wallet Connected:</strong><br />
+          <span
+            id="walletAddress"
+            style="font-family: monospace; font-size: 0.9em"
+          ></span
+          ><br />
+          <small>You'll pay 0.001 USDC per API request from this wallet.</small>
         </div>
 
-        <!-- Latest Price API -->
-        <div class="api-section">
-            <h2>1. Latest Price <span class="status-badge">POST /latest-price</span></h2>
-            <p>Get the latest closing price for a specific token.</p>
-            <form id="latestPriceForm">
-                <div class="form-group">
-                    <label for="latestTokenAddress">Token Address *</label>
-                    <input type="text" id="latestTokenAddress" placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" required>
-                </div>
-                <button type="submit">Get Latest Price</button>
-            </form>
-            <div id="latestPriceResponse" class="response-container"></div>
+        <div
+          style="
+            margin-top: 20px;
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+          "
+        >
+          <label style="display: flex; align-items: center; cursor: pointer">
+            <input
+              type="checkbox"
+              id="sendPaymentToggle"
+              checked
+              style="
+                margin-right: 8px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+              "
+            />
+            <span style="font-weight: 500">Send Payment (0.001 USDC)</span>
+          </label>
+          <small
+            style="
+              color: #6b7280;
+              display: block;
+              margin-top: 4px;
+              margin-left: 26px;
+            "
+          >
+            Uncheck to see what happens when payment is not sent (server will
+            reject with 402)
+          </small>
         </div>
+      </div>
 
-        <!-- OHLC API -->
-        <div class="api-section">
-            <h2>2. OHLC Data <span class="status-badge">POST /ohlc</span></h2>
-            <p>Get OHLC (Open, High, Low, Close) candle data for a token.</p>
-            <form id="ohlcForm">
-                <div class="form-group">
-                    <label for="ohlcTokenAddress">Token Address *</label>
-                    <input type="text" id="ohlcTokenAddress" placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" required>
-                </div>
-                <div class="form-group">
-                    <label for="ohlcInterval">Interval (seconds) - Optional</label>
-                    <input type="number" id="ohlcInterval" placeholder="60 (default)" min="1">
-                </div>
-                <button type="submit">Get OHLC Data</button>
-            </form>
-            <div id="ohlcResponse" class="response-container"></div>
-        </div>
+      <!-- Latest Price API -->
+      <div class="api-section">
+        <h2>
+          1. Latest Price <span class="status-badge">POST /latest-price</span>
+        </h2>
+        <p>Get the latest closing price for a specific token.</p>
+        <form id="latestPriceForm">
+          <div class="form-group">
+            <label for="latestTokenAddress">Token Address *</label>
+            <input
+              type="text"
+              id="latestTokenAddress"
+              placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij"
+              required
+            />
+          </div>
+          <button type="submit">Get Latest Price</button>
+        </form>
+        <div id="latestPriceResponse" class="response-container"></div>
+      </div>
 
-        <!-- Average Price API -->
-        <div class="api-section">
-            <h2>3. Average Price <span class="status-badge">POST /average-price</span></h2>
-            <p>Get average price data with moving averages (Mean, Simple Moving, Weighted Simple Moving, Exponential Moving).</p>
-            <form id="averagePriceForm">
-                <div class="form-group">
-                    <label for="avgTokenAddress">Token Address *</label>
-                    <input type="text" id="avgTokenAddress" placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" required>
-                </div>
-                <div class="form-group">
-                    <label for="avgInterval">Interval (seconds) - Optional</label>
-                    <input type="number" id="avgInterval" placeholder="60 (default)" min="1">
-                </div>
-                <button type="submit">Get Average Price</button>
-            </form>
-            <div id="averagePriceResponse" class="response-container"></div>
-        </div>
+      <!-- OHLC API -->
+      <div class="api-section">
+        <h2>2. OHLC Data <span class="status-badge">POST /ohlc</span></h2>
+        <p>Get OHLC (Open, High, Low, Close) candle data for a token.</p>
+        <form id="ohlcForm">
+          <div class="form-group">
+            <label for="ohlcTokenAddress">Token Address *</label>
+            <input
+              type="text"
+              id="ohlcTokenAddress"
+              placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="ohlcInterval">Interval (seconds) - Optional</label>
+            <input
+              type="number"
+              id="ohlcInterval"
+              placeholder="60 (default)"
+              min="1"
+            />
+          </div>
+          <button type="submit">Get OHLC Data</button>
+        </form>
+        <div id="ohlcResponse" class="response-container"></div>
+      </div>
 
-        <!-- Volume API -->
-        <div class="api-section">
-            <h2>4. Volume Data <span class="status-badge">POST /volume</span></h2>
-            <p>Get trading volume data (Base, Quote, and USD) for a token.</p>
-            <form id="volumeForm">
-                <div class="form-group">
-                    <label for="volumeTokenAddress">Token Address *</label>
-                    <input type="text" id="volumeTokenAddress" placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij" required>
-                </div>
-                <div class="form-group">
-                    <label for="volumeInterval">Interval (seconds) - Optional</label>
-                    <input type="number" id="volumeInterval" placeholder="60 (default)" min="1">
-                </div>
-                <button type="submit">Get Volume Data</button>
-            </form>
-            <div id="volumeResponse" class="response-container"></div>
-        </div>
+      <!-- Average Price API -->
+      <div class="api-section">
+        <h2>
+          3. Average Price <span class="status-badge">POST /average-price</span>
+        </h2>
+        <p>
+          Get average price data with moving averages (Mean, Simple Moving,
+          Weighted Simple Moving, Exponential Moving).
+        </p>
+        <form id="averagePriceForm">
+          <div class="form-group">
+            <label for="avgTokenAddress">Token Address *</label>
+            <input
+              type="text"
+              id="avgTokenAddress"
+              placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="avgInterval">Interval (seconds) - Optional</label>
+            <input
+              type="number"
+              id="avgInterval"
+              placeholder="60 (default)"
+              min="1"
+            />
+          </div>
+          <button type="submit">Get Average Price</button>
+        </form>
+        <div id="averagePriceResponse" class="response-container"></div>
+      </div>
+
+      <!-- Volume API -->
+      <div class="api-section">
+        <h2>4. Volume Data <span class="status-badge">POST /volume</span></h2>
+        <p>Get trading volume data (Base, Quote, and USD) for a token.</p>
+        <form id="volumeForm">
+          <div class="form-group">
+            <label for="volumeTokenAddress">Token Address *</label>
+            <input
+              type="text"
+              id="volumeTokenAddress"
+              placeholder="e.g., cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="volumeInterval">Interval (seconds) - Optional</label>
+            <input
+              type="number"
+              id="volumeInterval"
+              placeholder="60 (default)"
+              min="1"
+            />
+          </div>
+          <button type="submit">Get Volume Data</button>
+        </form>
+        <div id="volumeResponse" class="response-container"></div>
+      </div>
     </div>
 
-    <script>
-        const API_BASE_URL = 'http://localhost:4021';
-        const PROXY_ENDPOINT = `${API_BASE_URL}/proxy`;
-        
-        // Check if payment is bypassed (will be updated after first API call)
-        let paymentBypassed = false;
-        let useProxy = false; // Whether to use payment proxy
-        
-        // Check payment status on load
-        async function checkPaymentStatus() {
-            try {
-                // Try a simple request to see if payment is bypassed
-                const testResponse = await fetch(`${API_BASE_URL}/latest-price`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ tokenAddress: 'test' })
-                });
-                
-                if (testResponse.status === 402) {
-                    // Payment required - use proxy
-                    useProxy = true;
-                    updatePaymentWarning('Payment required - Using backend proxy for payments');
-                    updateWalletStatus('Payment proxy available - Ready to make paid requests', true);
-                } else if (testResponse.ok) {
-                    // Payment bypassed
-                    paymentBypassed = true;
-                    useProxy = false;
-                    updatePaymentWarning('Free Testing Mode - Payment bypassed');
-                    updateWalletStatus('Payment bypassed - Free testing mode', true);
-                }
-            } catch (error) {
-                // Server might not be ready, check proxy availability
-                updatePaymentWarning('Payment mode: Unknown - Will use proxy if needed');
-                updateWalletStatus('Checking payment status...', false);
-            }
-        }
-        
-        // Update warning message
-        function updatePaymentWarning(message) {
-            const warning = document.getElementById('paymentWarning');
-            const modeText = document.getElementById('paymentModeText');
-            modeText.textContent = message;
-            
-            if (paymentBypassed) {
-                warning.style.background = 'rgba(40, 167, 69, 0.2)';
-                warning.style.borderColor = '#28a745';
-            } else if (useProxy) {
-                warning.style.background = 'rgba(33, 150, 243, 0.2)';
-                warning.style.borderColor = '#2196F3';
-            }
-        }
-        
-        // Update wallet status
-        function updateWalletStatus(message, connected) {
-            const statusEl = document.getElementById('walletStatus');
-            statusEl.textContent = connected ? '✅ ' + message : '⚠️ ' + message;
-            statusEl.className = `wallet-status ${connected ? 'connected' : 'disconnected'}`;
-        }
-        
-        // Check status on page load
-        checkPaymentStatus();
+    <script type="module">
+      const API_BASE_URL = "http://localhost:4021";
+      let walletConnected = false;
+      let walletAddress = null;
+      let x402Module = null;
 
-        // Helper function to display response
-        function displayResponse(containerId, data, isError = false, statusCode = null) {
-            const container = document.getElementById(containerId);
-            container.className = `response-container show ${isError ? 'error' : 'success'}`;
-            
-            let header = '';
-            if (statusCode === 402) {
-                header = '<div class="response-header">⚠️ Payment Required (402)</div>';
-                container.className = 'response-container show payment';
-            } else if (isError) {
-                header = `<div class="response-header">❌ Error ${statusCode || ''}</div>`;
-            } else {
-                header = '<div class="response-header">✅ Success</div>';
-            }
-            
-            container.innerHTML = header + '<pre>' + JSON.stringify(data, null, 2) + '</pre>';
+      // Dynamically import x402 client bundle
+      (async () => {
+        try {
+          x402Module = await import("./x402-client-bundle.js");
+          console.log("✅ x402 client loaded");
+        } catch (error) {
+          console.error("Failed to load x402 client bundle:", error);
+          const warning = document.getElementById("paymentWarning");
+          if (warning) {
+            warning.innerHTML =
+              "<strong>⚠️ Error:</strong> x402 client bundle not found. Run: <code>npm run build:client</code>";
+            warning.style.background = "rgba(220, 38, 38, 0.2)";
+            warning.style.borderColor = "#dc2626";
+          }
+        }
+      })();
+
+      // Update payment warning
+      function updatePaymentWarning(message) {
+        const warning = document.getElementById("paymentWarning");
+        const modeText = document.getElementById("paymentModeText");
+        if (warning && modeText) {
+          modeText.textContent = message;
+        }
+      }
+
+      // Update wallet status
+      function updateWalletStatus(message, connected) {
+        const statusEl = document.getElementById("walletStatus");
+        if (statusEl) {
+          statusEl.textContent = connected ? "✅ " + message : "⚠️ " + message;
+          statusEl.className = `wallet-status ${
+            connected ? "connected" : "disconnected"
+          }`;
+        }
+      }
+
+      // Connect wallet
+      window.connectWallet = async function () {
+        if (!x402Module) {
+          alert("x402 client not loaded. Please run: npm run build:client");
+          return;
         }
 
-        // Helper function to make API call with payment handling
-        async function callAPI(endpoint, body, responseContainerId) {
-            const container = document.getElementById(responseContainerId);
-            const button = event.target.querySelector('button[type="submit"]') || event.target;
-            
-            // Show loading state
-            button.disabled = true;
-            button.innerHTML = '<span class="loading"></span>Loading...';
-            container.className = 'response-container';
-            
-            try {
-                let response;
-                let responseData;
-                let paymentInfo = null;
-                
-                // Use proxy if payment is required, otherwise call directly
-                if (useProxy && !paymentBypassed) {
-                    // Use payment proxy
-                    response = await fetch(PROXY_ENDPOINT, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            endpoint: endpoint,
-                            body: body
-                        })
-                    });
-                    
-                    const proxyData = await response.json();
-                    responseData = proxyData.data;
-                    paymentInfo = proxyData.payment;
-                } else {
-                    // Direct call (payment bypassed or testing)
-                    response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(body)
-                    });
-                    responseData = await response.json();
-                }
-                
-                // Handle response
-                if (response.status === 402) {
-                    // Payment required but proxy not available
-                    displayResponse(responseContainerId, {
-                        error: 'Payment Required',
-                        message: 'Payment is required but proxy is not available. Make sure EVM_PRIVATE_KEY is set in .env file.',
-                        status: 402,
-                        paymentRequired: true
-                    }, true, 402);
-                } else if (!response.ok) {
-                    displayResponse(responseContainerId, responseData, true, response.status);
-                } else {
-                    // Success - show data and payment info if available
-                    const displayData = { data: responseData };
-                    if (paymentInfo) {
-                        displayData.payment = {
-                            success: paymentInfo.success,
-                            transaction: paymentInfo.transaction,
-                            amount: paymentInfo.requirements ? 
-                                `${Number(paymentInfo.requirements.amount) / 1e6} ${paymentInfo.requirements.extra?.name || 'USDC'}` : 
-                                '0.001 USDC',
-                            network: paymentInfo.network
-                        };
-                    }
-                    displayResponse(responseContainerId, displayData, false, response.status);
-                }
-            } catch (error) {
-                displayResponse(responseContainerId, {
-                    error: 'Network Error',
-                    message: error.message,
-                    hint: 'Make sure the server is running on port 4021 and EVM_PRIVATE_KEY is set in .env'
-                }, true);
-            } finally {
-                button.disabled = false;
-                button.innerHTML = button.getAttribute('data-original-text') || 'Submit';
-            }
+        const privateKeyInput = document.getElementById("userPrivateKey");
+        const privateKey = privateKeyInput.value.trim();
+
+        if (!privateKey) {
+          alert("Please enter your private key");
+          return;
         }
 
-        // Latest Price Form
-        document.getElementById('latestPriceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tokenAddress = document.getElementById('latestTokenAddress').value;
-            const button = e.target.querySelector('button[type="submit"]');
-            button.setAttribute('data-original-text', 'Get Latest Price');
-            await callAPI('/latest-price', { tokenAddress }, 'latestPriceResponse');
+        if (!privateKey.startsWith("0x") && privateKey.length !== 64) {
+          alert(
+            "Invalid private key format. Should start with 0x or be 64 hex characters."
+          );
+          return;
+        }
+
+        try {
+          const result = x402Module.initializeX402Client(privateKey);
+          if (result.success) {
+            walletConnected = true;
+            // Derive address from private key (simplified - in real app use viem)
+            walletAddress = "0x" + "..." + privateKey.slice(-8);
+            updateWalletStatus("Wallet connected", true);
+
+            // Show wallet info
+            document.getElementById("walletInfo").style.display = "block";
+            document.getElementById("walletAddress").textContent =
+              walletAddress;
+            document.getElementById("connectWalletBtn").style.display = "none";
+            document.getElementById("disconnectWalletBtn").style.display =
+              "inline-block";
+            privateKeyInput.disabled = true;
+
+            updatePaymentWarning(
+              "Wallet connected - Ready to make paid requests"
+            );
+          } else {
+            alert("Failed to connect wallet: " + result.error);
+          }
+        } catch (error) {
+          alert("Error connecting wallet: " + error.message);
+        }
+      };
+
+      // Disconnect wallet
+      window.disconnectWallet = function () {
+        walletConnected = false;
+        walletAddress = null;
+        updateWalletStatus("Wallet not connected", false);
+        document.getElementById("walletInfo").style.display = "none";
+        document.getElementById("connectWalletBtn").style.display =
+          "inline-block";
+        document.getElementById("disconnectWalletBtn").style.display = "none";
+        document.getElementById("userPrivateKey").disabled = false;
+        document.getElementById("userPrivateKey").value = "";
+        updatePaymentWarning("Connect your wallet to make paid requests");
+      };
+
+      // Initialize
+      updatePaymentWarning("Connect your wallet to make paid requests");
+      updateWalletStatus("Wallet not connected", false);
+
+      // Helper function to display response
+      function displayResponse(
+        containerId,
+        data,
+        isError = false,
+        statusCode = null
+      ) {
+        const container = document.getElementById(containerId);
+        container.className = `response-container show ${
+          isError ? "error" : "success"
+        }`;
+
+        let header = "";
+        if (statusCode === 402) {
+          header =
+            '<div class="response-header">⚠️ Payment Required (402)</div>';
+          container.className = "response-container show payment";
+        } else if (isError) {
+          header = `<div class="response-header">❌ Error ${
+            statusCode || ""
+          }</div>`;
+        } else {
+          header = '<div class="response-header">✅ Success</div>';
+        }
+
+        container.innerHTML =
+          header + "<pre>" + JSON.stringify(data, null, 2) + "</pre>";
+      }
+
+      // Helper function to make API call with payment handling
+      async function callAPI(endpoint, body, responseContainerId) {
+        const container = document.getElementById(responseContainerId);
+        const button =
+          event.target.querySelector('button[type="submit"]') || event.target;
+
+        // Show loading state
+        button.disabled = true;
+        button.innerHTML = '<span class="loading"></span>Loading...';
+        container.className = "response-container";
+
+        try {
+          const sendPayment =
+            document.getElementById("sendPaymentToggle").checked;
+          const url = `${API_BASE_URL}${endpoint}`;
+          const options = {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+          };
+
+          let response;
+          let responseData;
+          let paymentInfo = null;
+
+          if (!sendPayment) {
+            // Make request without payment - will get 402
+            response = await fetch(url, options);
+            responseData = await response.json();
+          } else {
+            // Check if wallet is connected
+            if (
+              !walletConnected ||
+              !x402Module ||
+              !x402Module.isClientInitialized()
+            ) {
+              displayResponse(
+                responseContainerId,
+                {
+                  error: "Wallet Not Connected",
+                  message:
+                    "Please connect your wallet first to make paid requests.",
+                  hint: 'Enter your private key and click "Connect Wallet"',
+                },
+                true
+              );
+              return;
+            }
+
+            // Make paid request using x402 client
+            const result = await x402Module.makePaidRequest(url, options, true);
+            response = result.response;
+            paymentInfo = result.paymentInfo;
+            responseData = await response.json();
+          }
+
+          // Handle response
+          if (response.status === 402) {
+            // Payment required - server rejected request
+            displayResponse(
+              responseContainerId,
+              {
+                error: "Payment Required (402)",
+                message:
+                  "Server rejected the request because payment was not sent.",
+                status: 402,
+                paymentRequired: true,
+                note: sendPayment
+                  ? "Payment was attempted but failed. Check your wallet has USDC."
+                  : "Payment toggle is OFF - this demonstrates what happens without payment.",
+              },
+              true,
+              402
+            );
+          } else if (!response.ok) {
+            displayResponse(
+              responseContainerId,
+              responseData,
+              true,
+              response.status
+            );
+          } else {
+            // Success - show data and payment info if available
+            const displayData = { data: responseData };
+            if (paymentInfo) {
+              displayData.payment = {
+                success: paymentInfo.success,
+                transaction: paymentInfo.transaction,
+                amount: paymentInfo.requirements
+                  ? `${Number(paymentInfo.requirements.amount) / 1e6} ${
+                      paymentInfo.requirements.extra?.name || "USDC"
+                    }`
+                  : "0.001 USDC",
+                network: paymentInfo.network,
+              };
+            }
+            displayResponse(
+              responseContainerId,
+              displayData,
+              false,
+              response.status
+            );
+          }
+        } catch (error) {
+          displayResponse(
+            responseContainerId,
+            {
+              error: "Request Failed",
+              message: error.message,
+              hint: walletConnected
+                ? "Check your wallet has USDC on Base Sepolia"
+                : "Connect your wallet first",
+            },
+            true
+          );
+        } finally {
+          button.disabled = false;
+          button.innerHTML =
+            button.getAttribute("data-original-text") || "Submit";
+        }
+      }
+
+      // Latest Price Form
+      document
+        .getElementById("latestPriceForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const tokenAddress =
+            document.getElementById("latestTokenAddress").value;
+          const button = e.target.querySelector('button[type="submit"]');
+          button.setAttribute("data-original-text", "Get Latest Price");
+          await callAPI(
+            "/latest-price",
+            { tokenAddress },
+            "latestPriceResponse"
+          );
         });
 
-        // OHLC Form
-        document.getElementById('ohlcForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tokenAddress = document.getElementById('ohlcTokenAddress').value;
-            const interval = document.getElementById('ohlcInterval').value;
-            const body = { tokenAddress };
-            if (interval) body.interval = parseInt(interval);
-            const button = e.target.querySelector('button[type="submit"]');
-            button.setAttribute('data-original-text', 'Get OHLC Data');
-            await callAPI('/ohlc', body, 'ohlcResponse');
+      // OHLC Form
+      document
+        .getElementById("ohlcForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const tokenAddress =
+            document.getElementById("ohlcTokenAddress").value;
+          const interval = document.getElementById("ohlcInterval").value;
+          const body = { tokenAddress };
+          if (interval) body.interval = parseInt(interval);
+          const button = e.target.querySelector('button[type="submit"]');
+          button.setAttribute("data-original-text", "Get OHLC Data");
+          await callAPI("/ohlc", body, "ohlcResponse");
         });
 
-        // Average Price Form
-        document.getElementById('averagePriceForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tokenAddress = document.getElementById('avgTokenAddress').value;
-            const interval = document.getElementById('avgInterval').value;
-            const body = { tokenAddress };
-            if (interval) body.interval = parseInt(interval);
-            const button = e.target.querySelector('button[type="submit"]');
-            button.setAttribute('data-original-text', 'Get Average Price');
-            await callAPI('/average-price', body, 'averagePriceResponse');
+      // Average Price Form
+      document
+        .getElementById("averagePriceForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const tokenAddress = document.getElementById("avgTokenAddress").value;
+          const interval = document.getElementById("avgInterval").value;
+          const body = { tokenAddress };
+          if (interval) body.interval = parseInt(interval);
+          const button = e.target.querySelector('button[type="submit"]');
+          button.setAttribute("data-original-text", "Get Average Price");
+          await callAPI("/average-price", body, "averagePriceResponse");
         });
 
-        // Volume Form
-        document.getElementById('volumeForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const tokenAddress = document.getElementById('volumeTokenAddress').value;
-            const interval = document.getElementById('volumeInterval').value;
-            const body = { tokenAddress };
-            if (interval) body.interval = parseInt(interval);
-            const button = e.target.querySelector('button[type="submit"]');
-            button.setAttribute('data-original-text', 'Get Volume Data');
-            await callAPI('/volume', body, 'volumeResponse');
+      // Volume Form
+      document
+        .getElementById("volumeForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const tokenAddress =
+            document.getElementById("volumeTokenAddress").value;
+          const interval = document.getElementById("volumeInterval").value;
+          const body = { tokenAddress };
+          if (interval) body.interval = parseInt(interval);
+          const button = e.target.querySelector('button[type="submit"]');
+          button.setAttribute("data-original-text", "Get Volume Data");
+          await callAPI("/volume", body, "volumeResponse");
         });
     </script>
-</body>
+  </body>
 </html>
-
-

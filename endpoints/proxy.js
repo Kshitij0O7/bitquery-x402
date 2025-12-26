@@ -40,8 +40,14 @@ function initializePaymentClient() {
 const paymentFetch = initializePaymentClient();
 
 /**
- * Proxy endpoint that handles x402 payments and forwards requests to the actual API endpoints
- * This allows the browser to make paid requests without needing x402 libraries in the browser
+ * ⚠️ DEMO ONLY: Proxy endpoint that handles x402 payments using SERVER's wallet
+ * 
+ * This is for testing/demo purposes only. In production, users should use x402
+ * client libraries in their own code to pay from their own wallets.
+ * 
+ * This proxy uses the server's EVM_PRIVATE_KEY, meaning the SERVER pays for requests.
+ * For a real pay-per-use service, remove this proxy and have users integrate
+ * x402 client libraries in their own applications.
  */
 export const proxyRequest = async (req, res) => {
   try {
